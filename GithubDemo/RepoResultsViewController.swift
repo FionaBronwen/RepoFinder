@@ -35,6 +35,9 @@ class RepoResultsViewController: UIViewController, UITableViewDelegate, UITableV
 
         // Perform the first search when the view controller first loads
         doSearch()
+        
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 120
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
@@ -51,8 +54,8 @@ class RepoResultsViewController: UIViewController, UITableViewDelegate, UITableV
         
         cell.repoName.text = repo.name
         cell.userLabel.text = repo.ownerHandle
-        cell.starsLabel.text = "\(repo.stars)"
-        cell.forksLabel.text = "\(repo.forks)"
+        cell.starsLabel.text = "\(repo.stars!)"
+        cell.forksLabel.text = "\(repo.forks!)"
         cell.descriptionLabel.text = repo.repoDescription
         if let avatarURL = repo.ownerAvatarURL {
             if let url = URL(string: avatarURL){
