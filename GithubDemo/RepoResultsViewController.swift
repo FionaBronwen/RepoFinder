@@ -10,7 +10,7 @@ import UIKit
 import MBProgressHUD
 
 // Main ViewController
-class RepoResultsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class RepoResultsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, SettingsPresentingViewControllerDelegate {
     
     
     @IBOutlet weak var tableView: UITableView!
@@ -65,6 +65,17 @@ class RepoResultsViewController: UIViewController, UITableViewDelegate, UITableV
         
         return cell
     }
+    
+    func didSaveSettings(settings: GithubRepoSearchSettings) {
+        self.searchSettings = settings
+        doSearch()
+        print("Made it to didSave 💊💊💊💊💊💊💊")
+        
+    }
+    
+    func didCancelSettings() {
+        
+    }
 
     // Perform the search.
     fileprivate func doSearch() {
@@ -75,19 +86,22 @@ class RepoResultsViewController: UIViewController, UITableViewDelegate, UITableV
 
         // Perform request to GitHub API to get the list of repositories
         GithubRepo.fetchRepos(searchSettings, successCallback: { (newRepos) -> Void in
-
-            // Print the returned repositories to the output window
-            for repo in newRepos {
-                self.repos.append(repo)
-                print(repo)
-                self.tableView.reloadData()
-
-            }
+            self.repos = newRepos
+            self.tableView.reloadData()
 
             MBProgressHUD.hide(for: self.view, animated: true)
             }, error: { (error) -> Void in
                 print(error ?? "error")
         })
+    }
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let navController = segue.destination as! UINavigationController
+        let vc = navController.topViewController as! SearchSettingsViewController
+        
+        vc.searchSettings = self.searchSettings
+        vc.delegate = self
     }
 }
 
@@ -115,3 +129,4 @@ extension RepoResultsViewController: UISearchBarDelegate {
         doSearch()
     }
 }
+
